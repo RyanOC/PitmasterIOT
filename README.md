@@ -50,7 +50,7 @@ The 3D components of PitmasterIOT were meticulously designed in Tinkercad.com an
 | **Total**                            | **$169.20** |                                      |
 
 ## 3D Printed Enclosure Parts
-The following [link](https://makerworld.com/en/models/107291) provides detailed models of the 3D printed enclosure components designed for the PitmasterIOT system.
+The following [link](https://makerworld.com/en/models/46730) provides detailed models of the 3D printed enclosure components designed for the PitmasterIOT system.
 
 ## Software
 Our custom Arduino software powers the PitmasterIOT, which is located in the [src](src) folder. Here's an overview of the integrated libraries:
