@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pitmaster IOT Dashboard</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/png" href="favicon.png">
+        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link href="https://db.onlinewebfonts.com/c/8e8e625f12e45ecc674f9579c4547351?family=DS-Digital+Italic" rel="stylesheet">
+    </head>
+    <body>
+        <div class="topnav">
+            <h1 style="font-family: DS-Digital Italic;">Pitmaster IOT</h1>
+        </div>
+        <div class="content">
+            <div class="card-grid">
+                <div class="card">
+                    <p class="card-title"><i class="fas fa-thermometer-threequarters" style="color:#059e8a;"></i> Temperature 0</p>
+                    <p class="reading"><span id="temperature_0"></span> &deg;F</p>
+                </div>
+                <div class="card">
+                    <p class="card-title"><i class="fas fa-thermometer-threequarters" style="color:#059e8a;"></i> Temperature 1</p>
+                    <p class="reading"><span id="temperature_1"></span> &deg;F</p>
+                </div>
+            </div>
+        </div>
+        <canvas id="temperatureChart"></canvas>
+        <div id="sliderContainer">
+            <label for="customSlider">Temperature Selection:</label>
+            <input type="range" id="customSlider" min="0" max="4" step="1" list="tickmarks" value="0">
+            <div class="slider-labels">
+                <span class="slider-label">0</span>
+                <span class="slider-label">30</span>
+                <span class="slider-label">50</span>
+                <span class="slider-label">70</span>
+                <span class="slider-label">100</span>
+            </div>
+        </div>
+        <div id="configContainer">
+            <div id="configModal" class="modal">
+                <div class="modal-content">
+                    <label for="thermo_0_adjustment">thermo_0_adjustment:</label>
+                    <input id="thermo_0_adjustment" type="text">
+                    <label for="thermo_1_adjustment">thermo_1_adjustment:</label>
+                    <input id="thermo_1_adjustment" type="text">
+                    <button onclick="closeModal()">Cancel</button>
+                    <button onclick="SaveConfiguration()">Save</button>
+                </div>
+            </div>
+            <button onclick="openModal()">Settings</button>            
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>
