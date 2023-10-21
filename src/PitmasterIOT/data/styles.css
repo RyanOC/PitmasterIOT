@@ -1,0 +1,136 @@
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  display: inline-block;
+  text-align: center;
+}
+
+body {
+  margin: 0px 0;
+  font-family: Arial, sans-serif;
+}
+
+#sliderContainer {
+  background-color: #f2f2f2;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#customSlider {
+  width: 100%;
+  height: 25px;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+#customSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 40px;
+  background-color: #4CAF50;
+  cursor: pointer;
+}
+
+#customSlider::-moz-range-thumb {
+  width: 20px;
+  height: 40px;
+  background-color: #4CAF50;
+  cursor: pointer;
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.slider-label {
+  position: relative;
+  top: -20px;
+}
+
+h1 {
+  font-size: 3.0rem;
+  color: white;
+  margin: 8px;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #0A1128;
+  padding: 0px;
+  height:60px;
+}
+
+body {
+  margin: 0;
+}
+
+.content {
+  padding: 50px;
+}
+
+.card-grid {
+  max-width: 800px;
+  margin: 0 auto;
+  display: grid;
+  grid-gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.card {
+  background-color: white;
+  box-shadow: 2px 2px 12px 1px rgba(140, 140, 140, .5);
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #034078
+}
+
+.reading {
+  font-size: 1.2rem;
+  color: #1282A2;
+}
+
+#configContainer {
+  padding: 40px;
+  float:left;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    z-index: 1;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
