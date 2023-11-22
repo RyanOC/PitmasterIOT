@@ -69,7 +69,7 @@ function onMessage(event) {
         document.getElementById("temperature_1").innerHTML = temp1;
     }
    
-    if(myObj.thermoKey_0 != null && myObj.thermoKey_1 != null){
+    if(myObj.thermoKey_0 != null && myObj.thermoKey_1 != null && document.getElementById("configModal").style.display == "none"){
         // "{"thermoKey_0":-151,"thermoKey_1":-144}"
         if(document.getElementById('thermo_0_adjustment').value != myObj.thermoKey_0){
             document.getElementById('thermo_0_adjustment').value = myObj.thermoKey_0;

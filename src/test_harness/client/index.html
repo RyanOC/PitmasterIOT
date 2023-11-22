@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pitmaster IOT Dashboard</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/png" href="favicon.png">
+        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link href="https://db.onlinewebfonts.com/c/8e8e625f12e45ecc674f9579c4547351?family=DS-Digital+Italic" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    </head>
+    <body>
+        <div id="hamburgerIcon" class="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="topnav">
+            <h1 style="font-family: DS-Digital Italic;">Pitmaster IOT</h1>
+        </div>
+        <div class="card-container">
+            <div class="card">
+                <div class="key">Temperature 1:</div>
+                <div class="value"><span id="temperature_0"></span> &deg;F</div>
+            </div>
+            <div class="card">
+                <div class="key">Temperature 2:</div>
+                <div class="value"><span id="temperature_1"></span> &deg;F</div>
+            </div>
+        </div>
+        <div id="chart"></div>
+        <div id="configModal" class="modal">
+            <div class="modal-content">
+                <!--label for="thermo_0_adjustment">thermo_0_adjustment:</label>
+                <input id="thermo_0_adjustment" type="text">            
+                <label for="thermo_1_adjustment">thermo_1_adjustment:</label>
+                <input id="thermo_1_adjustment" type="text">                
+                <button onclick="toggleConfig()">Cancel</button>
+                <button onclick="SaveConfiguration()">Save</button-->
+                <br><br>
+                <div id="sliderContainer">
+                    <label for="customSlider">Fan Speed Selector:</label>
+                    <input type="range" id="customSlider" min="0" max="4" step="1" list="tickmarks" value="0">
+                    <div class="slider-labels">
+                        <span class="slider-label">0</span>
+                        <span class="slider-label">30</span>
+                        <span class="slider-label">50</span>
+                        <span class="slider-label">70</span>
+                        <span class="slider-label">100</span>
+                    </div>
+                </div>
+                <button onclick="provideLogDataInfo()">Cache Details</button>
+                <button onclick="updateChartWithBulkData()">Apply Cache</button>
+                <button onclick="clearLogData()">Clear Cache</button>
+                <div id="logDataInfo">
+                    <!-- Log data information will be displayed here -->
+                </div>
+            </div>  
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>

@@ -16,7 +16,6 @@ An IoT-enabled device designed specifically for BBQ enthusiasts. This device off
 
 With this device, achieve the perfect BBQ every time by combining traditional grilling methods with modern technology.
 
-
 <img src="assets/pitmaster_iot_3.jpg" alt="" style="display: block; width: 400px; max-width: 400px; height: auto; margin-bottom:20px;"> 
 <img src="assets/pitmaster_iot_0.jpg" alt="" style="display: block; width: 400px; max-width: 400px; height: auto; margin-bottom:20px;">
 <img src="assets/pitmaster_iot_1.jpg" alt="" style="display: block; width: 400px; max-width: 400px; height: auto; margin-bottom:20px;">
@@ -141,11 +140,8 @@ We're continually looking to enhance the PitmasterIOT experience. Planned update
 - Enhanced user interfaces
 - Home Assistant Integration
 
-## Contribution & Licensing
-We welcome contributions to the PitmasterIOT project. Please see our contribution guidelines for more information. This project is licensed under XYZ License.
-
 ## Acknowledgments
 Thanks to the open-source community and all BBQ enthusiasts for their insights and encouragement throughout the development of this project. A special mention to [Random Nerd Tutorials](https://randomnerdtutorials.com)  for their invaluable posts that guided and inspired me.
 
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+## Contribution & Licensing
+We welcome contributions to the PitmasterIOT project. Please see our contribution guidelines for more information. This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.

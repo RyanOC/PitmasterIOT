@@ -1,0 +1,228 @@
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  display: inline-block;
+  text-align: center;
+}
+
+body {
+  background: #181818;
+  margin: 0px 0;
+  font-family: Arial, sans-serif;
+  color: #ddd;
+}
+
+.hamburger {
+  cursor: pointer;
+  width: 30px; /* Width of the hamburger */
+  height: 20px; /* Height of the hamburger */
+  display: inline-block;
+  position: absolute; /* Position it at the top left */
+  top: 12px;
+  left: 15px;
+}
+
+.hamburger div {
+  height: 3px; /* Height of each bar */
+  background: #ddd; /* Color of the bars */
+  margin: 5px 0; /* Spacing between the bars */
+  transition: 0.4s;
+}
+
+.topnav {
+  overflow: hidden;
+  /* text-align: left; */
+  /* background-color: #0A1128; */
+  padding: 0px;
+  margin:10px 0px 0px 0px;
+}
+
+h1 {
+  font-size: 2.0rem;
+  /* color: white; */
+  margin: 0px;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: nowrap; /* Prevents cards from wrapping to the next line */
+  overflow-x: auto; /* Introduces a scrollbar when the cards overflow horizontally */
+  margin: 0px 8px 10px 8px;
+  padding-top:15px;
+  /* border-top: #ddd solid 1px; */
+}
+.card {
+  flex: 1 1 auto; /* Grow to fill space, don't shrink smaller than content */
+  min-width: 100px; /* Set a minimum width for the cards */
+  box-sizing: border-box; /* Include padding and border in the card's width */
+  /* background: #f7f7f7; */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin: 0 0 10px 10px;
+  padding: 5px;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.card .key {
+  font-size: 0.8em;
+  font-weight: bold;
+  /* color: #555; */
+  margin-bottom: 5px;
+}
+.card .value {
+  font-size: 0.7em;
+  /* color: #333; */
+}
+
+#sliderContainer {
+  /* background-color: #f2f2f2; */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#customSlider {
+  color:#181818;
+  width: 100%;
+  height: 25px;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+#sliderContainer > input {
+  background-color: #262626;
+  border: #ddd 1px solid;
+}
+
+#customSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 40px;
+  background-color: #2760b7;
+  cursor: pointer;
+}
+
+#customSlider::-moz-range-thumb {
+  width: 20px;
+  height: 40px;
+  background-color: #2760b7;
+  cursor: pointer;
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.slider-label {
+  position: relative;
+  top: -5px;
+}
+
+.content {
+  padding: 50px;
+}
+
+.reading {
+  font-size: 1.2rem;
+  color: #1282A2;
+}
+
+.hamburger {
+  z-index: 999;
+}
+
+/* Keyframes for slide-in effect from the left */
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Keyframes for slide-out effect to the left */
+@keyframes slideOutToLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0; /* Extends to the right edge */
+  bottom: 0; /* Extends to the bottom edge */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgba(0,0,0,0.4); /* Dimmed background */
+  z-index: 18; /* Ensure it's above other content */
+  justify-content: center; /* Center the child horizontally */
+  align-items: center; /* Center the child vertically */
+}
+
+.modal-content {
+  background-color: #181818;
+  padding: 80px 0 0 0;
+  width: 100%; 
+  height: 100%;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  overflow-y: auto; /* Allow scrolling for overflowing content */
+  box-sizing: border-box; /* Include padding in width calculations */
+}
+
+/* Class to slide in the modal content */
+.slide-in {
+  animation: slideInFromLeft 0.5s forwards;
+}
+
+/* Class to slide out the modal content */
+.slide-out {
+  animation: slideOutToLeft 0.5s forwards;
+}
+
+.modal-content input {
+  width: calc(100% - 40px); /* Adjust width for padding */
+  margin-bottom: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.modal-content button {
+  padding: 10px 20px;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+#logDataInfo {
+  padding: 15px;
+  font-size: 0.7em;
+  text-align: left;
+}
+
+.apexcharts-toolbar svg {
+  fill: #f0f0f0 !important;
+}
+
+.apexcharts-legend {
+  margin: 10px 0 0 0
+}
+
+.apexcharts-toolbar {
+    /* top: auto !important;
+    bottom: 0 !important; */
+    top: 0 !important; /* Moves the toolbar to the top */
+    bottom: auto !important; /* Resets the bottom property */
+    z-index: 1;
+}
