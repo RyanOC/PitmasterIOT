@@ -1,13 +1,17 @@
+#include "DataHelper.h"
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include "time.h"
+#include <ESPAsyncWebServer.h>
 #include "max6675.h"
 #include <Preferences.h>
-#include <WiFi.h>
-#include <ESPAsyncWebServer.h>
-#include "SPIFFS.h"
+#include <Arduino.h>
 #include "FS.h"
 #include <LittleFS.h>
 #include <ArduinoJson.h>
 #include <Arduino_JSON.h>
-#include "DataHelper.h"
+
+#define FORMAT_LITTLEFS_IF_FAILED true
 
 const char* ssid = "Your Network SSID Here";
 const char* password = "Your Network Password Here";
@@ -20,7 +24,7 @@ JSONVar configs;
 
 // Timer variables
 unsigned long lastTime = 0;
-unsigned long timerDelay = 5000;
+unsigned long timerDelay = 15000;
 
 // thermo_0 setup
 int thermoDO_0 = 19; // SO
@@ -50,14 +54,14 @@ MAX6675 thermocouple_1(thermoCLK_1, thermoCS_1, thermoDO_1);
 
 Preferences preferences;
 
-const int thermAdjDef_0 = -153;
-const int thermAdjDef_1 = -145;
+const int thermAdjDef_0 = 0;
+const int thermAdjDef_1 = 0;
 
 const char* thermoKey_0 = "thermoKey_0";
 const char* thermoKey_1 = "thermoKey_1";
 
-const char* temperature_0 = "temperature_0";
-const char* temperature_1 = "temperature_1";
+const char* temperature_0 = "temp0";
+const char* temperature_1 = "temp1";
 
 const char* thermo_0_adjustment = "thermo_0_adjustment";
 const char* thermo_1_adjustment = "thermo_1_adjustment";
@@ -66,22 +70,73 @@ const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 0;
 const int   daylightOffset_sec = 3600;
 
+struct tm currentTime; // Global variable to hold the current time
+unsigned long lastSyncTime = 0; // Last time the time was synchronized
+const long syncInterval = 86400000; // Interval to sync time (24 hour in milliseconds)
+bool timeIsSynchronized = false; // Flag to check if time is synchronized
+
+const char* logFileName = "/log.json";
+
+String getFormattedTime() {
+    if (timeIsSynchronized) {
+        char buffer[20];
+        strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S", &currentTime);
+        return String(buffer) + "Z";
+    } else {
+        return "Time not synchronized";
+    }
+}
+
+String getTime(int maxRetries = 5, int retryDelayMs = 2000) {
+  struct tm timeinfo;
+  while(maxRetries--) {
+    // Attempt to get the local time
+    if(getLocalTime(&timeinfo)) {
+      char timeStr[20]; // Buffer to hold the formatted date and time.
+      // Format the timeinfo structure into a date-time string in ISO 8601 format.
+      strftime(timeStr, sizeof(timeStr), "%Y-%m-%dT%H:%M:%S", &timeinfo);
+      return String(timeStr) + "Z"; // Append 'Z' to indicate UTC time (if the time retrieved is in UTC)
+    }
+
+    // If the time was not retrieved, wait for retryDelayMs milliseconds before retrying
+    Serial.println("Failed to obtain time, retrying...");
+    delay(retryDelayMs);
+  }
+  return ""; // Return an empty string if time could not be retrieved
+}
+
 void setup() {
   Serial.begin(9600);
-  
-  delay(3000);
-  preferences.begin("thermo", false);
+  delay(2000);
 
-  Serial.println("Stored Preferences:");
+  Serial.println("Starting setup()");
+  delay(1000);
+
+  initLittleFS(logFileName);
+  delay(2000);
+  deleteFile(LittleFS, logFileName);
+  delay(2000);
+
+  initWiFi();
+  delay(2000);
+
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  delay(1000);
+
+  // Initial time synchronization
+  if (getTime().length() > 0) {
+      getLocalTime(&currentTime);
+      lastSyncTime = millis();
+      timeIsSynchronized = true;
+  }
+  delay(2000);
+
+  preferences.begin("thermo", false);
+  Serial.println("Stored Preferences for > thermo");
+  delay(2000);
 
   int storedValue_0 = preferences.getInt(thermoKey_0, thermAdjDef_0); // Provide a default value if not found
   int storedValue_1 = preferences.getInt(thermoKey_1, thermAdjDef_1); // Provide a default value if not found
-
-  //Serial.print(thermoKey_0 + ": ");
-  //Serial.println(storedValue_0);
-
-  //Serial.print(thermoKey_1 + ": ");
-  //Serial.println(storedValue_1);
 
   configs[thermoKey_0] = storedValue_0; 
   configs[thermoKey_1] = storedValue_1; 
@@ -92,73 +147,33 @@ void setup() {
   pinMode(tachPin, INPUT_PULLUP); // Configure tachPin as input with internal pull-up resistor
   pinMode(MOSFET_GATE, OUTPUT);
   digitalWrite(MOSFET_GATE, LOW); // Turn Fan Off
-  initSPIFFS();
-
-  if (!LittleFS.begin()) {
-    Serial.println("An error has occurred while mounting LittleFS");
-    return;
-  }
-
-  initWiFi();
-
-  delay(3000);
-
-  initTime();
-
-  delay(3000);
-
-  checkAndUpdateJsonFile("/log.json");
+  delay(2000);
 
   initWebSocket();
+  delay(2000);
 
   // Web Server Root URL
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(SPIFFS, "/index.html", "text/html");
+    request->send(LittleFS, "/index.html", "text/html");
   });
-
-  server.serveStatic("/", SPIFFS, "/");
+  server.serveStatic("/", LittleFS, "/");
   server.begin();
 }
 
-void initTime(){
-  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-
-  // Wait for time to be set
-  time_t now = time(nullptr);
-  while (now < 24 * 3600) {
-    delay(100);
-    now = time(nullptr);
-  }
-  struct tm timeinfo;
-  localtime_r(&now, &timeinfo);
-}
-
-void initSPIFFS() {
-  if (!SPIFFS.begin(true)) {
-    //Serial.println("An error has occurred while mounting SPIFFS");
-  }
-  //Serial.println("SPIFFS mounted successfully");
-}
-
 void initWiFi() {
-
-  // Optionnal: Set your Static IP address
+  Serial.println("Connecting to WiFi..");
   IPAddress local_IP(192, 168, 86, 184);
-
-  // Optionnal: Set your Gateway IP address
   IPAddress gateway(192, 168, 86, 1);
   IPAddress subnet(255, 255, 255, 0);
-
-  if(!WiFi.config(local_IP, gateway, subnet)) {
+  IPAddress primaryDNS(8, 8, 8, 8);
+  IPAddress secondaryDNS(8, 8, 4, 4);
+  if(!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
     Serial.println("STA Failed to configure");
   }
-
-  WiFi.mode(WIFI_STA);
-  WiFi.setHostname("bootleg_bbq_blower");
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi..");
+    delay(500);
+    Serial.print(".");
   }
   Serial.println(WiFi.localIP());
 }
@@ -170,18 +185,22 @@ void initWebSocket() {
 
 String getSensorReadings(){
 
-  int thermo0 = configs[thermoKey_0];
-  int thermo1 = configs[thermoKey_1];
+  thermoFahrenheit_0 = thermocouple_0.readFahrenheit() + 220 + ((rand() % 21) - 10); // + thermo0;
+  thermoFahrenheit_1 = thermocouple_1.readFahrenheit() + 220 + ((rand() % 21) - 10); // + thermo1;
 
-  thermoFahrenheit_0 = thermocouple_0.readFahrenheit() + thermo0;
-  thermoFahrenheit_1 = thermocouple_1.readFahrenheit() + thermo1;
+  String currentTime = getFormattedTime();
+  Serial.println(currentTime);
 
+  readings["time"] = currentTime;
   readings[temperature_0] = thermoFahrenheit_0;
   readings[temperature_1] = thermoFahrenheit_1;
 
-  addLogEntry("/log.json", "2023-11-17T13:28:06.419Z", 80.0, 80.0, 0);
-
   String jsonString = JSON.stringify(readings);
+  const char* messageCStr = jsonString.c_str();
+
+  //addLogEntry("/log.json", "2023-11-17T13:28:06.419Z", 80.0, 80.0, 0);
+  appendFile(LittleFS, logFileName, messageCStr); //Append data to the file
+  readFile(LittleFS, logFileName); // Read the contents of the file
   
   return jsonString;
 }
@@ -309,7 +328,40 @@ void setFanSpeed(int percentage) {
   readPulse();
 }
 
+void updateTime() {
+    unsigned long currentMillis = millis();
+
+    // Update the time from NTP server every hour
+    if (currentMillis - lastSyncTime >= syncInterval) {
+        if (getTime().length() > 0) {
+            getLocalTime(&currentTime);
+            lastSyncTime = currentMillis;
+            timeIsSynchronized = true;
+        }
+    }
+
+    // Update currentTime every second
+    if (timeIsSynchronized && currentMillis - lastSyncTime >= 1000) {
+        lastSyncTime += 1000;
+        currentTime.tm_sec++;
+        if (currentTime.tm_sec >= 60) {
+            currentTime.tm_sec = 0;
+            currentTime.tm_min++;
+            if (currentTime.tm_min >= 60) {
+                currentTime.tm_min = 0;
+                currentTime.tm_hour++;
+                if (currentTime.tm_hour >= 24) {
+                    currentTime.tm_hour = 0;
+                    // Additional day/month/year handling can be added here
+                }
+            }
+        }
+    }
+}
+
 void loop() { 
+
+  updateTime();
 
   if ((millis() - lastTime) > timerDelay) {
     String sensorReadings = getSensorReadings();
